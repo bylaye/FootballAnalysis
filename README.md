@@ -31,3 +31,29 @@ Done for League Portugal,  0.699869 seconds
 Done for League Netherlands,  0.713196 seconds
 Done for League Belgium,  0.704222 seconds
 ```
+
+## Description des champs de colonnes
+
+> 'Div' : Division League
+> 'Date' : Date Match
+> 'Time' : TIme match programmed
+> 'HomeTeam' : Home play at Home
+> 'AwayTeam' : Home Away
+> 'FTHG' : Full Time Home Goal
+> 'FTAG' : Full Time Away Goal
+> 'FTR' : Full Time Result
+> 'HTHG' : Half Time Home Goal
+> 'HTAG': Half Time Away Goal
+> 'HTR' : Half Time Result
+> 'HS': Home Shoot
+> 'AS' : Away Shoot
+> 'HST': Home Shoot Target
+> 'AST' : Away Shoot Target
+> 'HF': Home Total Fault 
+> 'AF': Away Total Fault
+> 'HC': Home Total Corner
+> 'AC' : Away Total Corner
+> 'HY' : Home Total Yellow card
+> 'AY' : Away Total Yellow card
+> 'HR' : Home Total Red Card
+> 'AR' : Away Total Red Card
