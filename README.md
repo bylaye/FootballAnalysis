@@ -34,8 +34,8 @@ Done for League Belgium,  0.704222 seconds
 
 ## Description des champs de colonnes
 
-* 'Div' : Division League
-* 'Date' : Date Match
+* 'Div' => Division League
+* 'Date'  =>  Date Match
 * 'Time' : TIme match programmed
 * 'HomeTeam' : Home play at Home
 * 'AwayTeam' : Home Away
