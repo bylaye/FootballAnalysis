@@ -6,6 +6,7 @@ import os
 from datetime import date, datetime
 import sys
 import requests
+from params import DIRECTORY, NAME_DIR_DATASET
 
 """List Top League"""
 leagues = {
@@ -44,7 +45,7 @@ def season_list(number_season=1):
     return seasons
 
 
-def path_directory(parent=os.path.dirname(__file__) , name='SeasonDatasets'):
+def path_directory(parent=DIRECTORY , name=NAME_DIR_DATASET):
     path_dataset = os.path.join(parent, name)
     if not os.path.isdir(path_dataset):
         os.makedirs(path_dataset)
