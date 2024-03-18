@@ -44,7 +44,7 @@ def season_list(number_season=1):
     return seasons
 
 
-def path_directory(parent=os.getcwd(), name='SeasonDatasets'):
+def path_directory(parent=os.path.dirname(__file__) , name='SeasonDatasets'):
     path_dataset = os.path.join(parent, name)
     if not os.path.isdir(path_dataset):
         os.makedirs(path_dataset)
