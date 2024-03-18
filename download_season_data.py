@@ -71,3 +71,21 @@ def download_datasets(league, season):
         print(e)
     except Exception as e:
         print(e)
+
+
+if __name__  == '__main__':
+    # default we get ust the current/last season
+    number_season = 1
+    if len(sys.argv) == 2:
+        try:
+            number_season = int(sys.argv[1])
+        except:
+            number_season = 1
+    seasons = season_list(number_season)
+    for season in seasons:
+        print(f'Season {season}')
+        for league in leagues:
+            start = datetime.now()
+            download_datasets(league=league, season=season)
+            t = (datetime.now() - start).total_seconds()
+            print(f'Done for League {leagues[league]},  {t} seconds')
