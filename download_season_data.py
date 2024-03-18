@@ -60,9 +60,9 @@ def download_datasets(league, season):
     try:
         response = requests.get(full_url)
         response.raise_for_status()
-        file_name = season+'.csv'
-        league_path = path_directory(path_dataset, league)
-        file_data = os.path.join(league_path, file_name)
+        file_name = f'{season}_{league}.csv'
+        season_path = path_directory(path_dataset, season)
+        file_data = os.path.join(season_path, file_name)
         with open(file_data, 'wb') as file:
             file.write(response.content)
     except requests.exceptions.RequestException as e:
