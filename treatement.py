@@ -5,7 +5,23 @@ import mysql.connector
 
 
 dataset_path = os.path.join(params.DIRECTORY, params.NAME_DIR_DATASET)
-print(dataset_path)
+
+header_list = [
+    'Season', 'Div', 'Date', 'HomeTeam', 'AwayTeam', 
+    'FTHG', 'FTAG', 'FTR', 'HTHG', 'HTAG', 'HTR', 'HS', 'AS', 
+    'HST', 'AST', 'HF', 'AF', 'HC', 'AC', 'HY', 'AY', 'HR', 'AR'
+]
+
+""""""
+def headers(header_list, header_dataset):
+    header_dict = {}
+    for i, h in enumerate(header_dataset):
+        if h in header_list:
+            if h not in header_dict:
+                header_dict[h] = i
+            else:
+                print(f'Duplicate header {h} {header_dict[h]}, {i}')
+    return header_dict
 
 
 def extract_fields(csv_file,season):
@@ -13,11 +29,26 @@ def extract_fields(csv_file,season):
         reader = csv.reader(f)
         dataset = []
         for row in reader:
-            row  = row[:23]
-            row.insert(0, season)
-            dataset.append(tuple(row))
-    dataset.pop(0)
-    return dataset
+            #row  = row[:25]
+            # verifier les team name vide
+            if len(row[2]) > 1 and len(row[3]) > 1:
+                dataset.append(row)
+    header_dataset = dataset.pop(0)
+    result = []
+    h = headers(header_list=header_list, header_dataset=header_dataset)
+    for row in dataset:
+        r = (
+            season, row[h[header_list[1]]], row[h[header_list[2]]], 
+            row[h[header_list[3]]], row[h[header_list[4]]], row[h[header_list[5]]],
+            row[h[header_list[6]]], row[h[header_list[7]]], row[h[header_list[8]]], 
+            row[h[header_list[9]]], row[h[header_list[10]]], row[h[header_list[11]]], 
+            row[h[header_list[12]]], row[h[header_list[13]]], row[h[header_list[14]]], 
+            row[h[header_list[15]]], row[h[header_list[16]]], row[h[header_list[17]]], 
+            row[h[header_list[18]]], row[h[header_list[19]]], row[h[header_list[20]]], 
+            row[h[header_list[21]]], row[h[header_list[22]]]
+        )
+        result.append(r)
+    return result
 
 
 """Connection Server Database"""
@@ -61,7 +92,6 @@ def table_description(tb_name):
                 `SEASON` CHAR(4),
                 `LEAGUE` CHAR(5),
                 `Date` CHAR(20),
-                `Time` CHAR(10),
                 `HomeTeam` CHAR(50),
                 `AwayTeam` CHAR(50),
                 `FTHG` CHAR(5),
@@ -81,7 +111,7 @@ def table_description(tb_name):
                 `HY` CHAR(5),
                 `AY` CHAR(5),
                 `HR` CHAR(5),
-                `AR` INT(5),
+                `AR` CHAR(5),
                 PRIMARY KEY (`SEASON`, `LEAGUE`, `HomeTeam`, `AwayTeam`)
             ) ENGINE=InnoDB
         """
@@ -89,9 +119,9 @@ def table_description(tb_name):
 def insert_data(cursor, tb_name, val):
     req = f"""
             INSERT INTO {tb_name} 
-                (`SEASON`, `LEAGUE`, `Date`, `Time`, `HomeTeam`, `AwayTeam`, `FTHG`, `FTAG`, `FTR`, `HTHG`,
+                (`SEASON`, `LEAGUE`, `Date`,  `HomeTeam`, `AwayTeam`, `FTHG`, `FTAG`, `FTR`, `HTHG`,
                   `HTAG`, `HTR`, `HS`, `AS`, `HST`, `AST`, `HF`, `AF`, `HC`, `AC`, `HY`, `AY`, `HR`, `AR` )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
     cursor.executemany(req, val)
     
@@ -104,16 +134,16 @@ if __name__ == '__main__':
     cursor = cnx.cursor()
     cnx.database = create_database(cursor)
     create_table(cursor,TB_NAME)
-
-
+    
     for dirs,_, files in os.walk(dataset_path):
         if files:
-
             season = os.path.split(dirs)[-1]
             for f in files:
                 file = os.path.join(dirs, f)
+                print(file)
                 dataset = extract_fields(file, season)
                 insert_data(cursor, TB_NAME, dataset)
             cnx.commit()
+            print(f'Done Season {season} - total rows {(len(dataset))}')
     cnx.close()
         
