@@ -7,17 +7,15 @@ import mysql.connector
 dataset_path = os.path.join(params.DIRECTORY, params.NAME_DIR_DATASET)
 print(dataset_path)
 
-"""Check if the dataset directory exist"""
-def dataset_directory_exits(dataset_path):
-    return os.path.isdir(dataset_path)
 
-
-def extract_fields(csv_file):
+def extract_fields(csv_file,season):
     with open(csv_file, newline='') as f:
         reader = csv.reader(f)
         dataset = []
         for row in reader:
-            dataset.append(row[:23])
+            row  = row[:23]
+            row.insert(0, season)
+            dataset.append(tuple(row))
     dataset.pop(0)
     return dataset
 
@@ -54,25 +52,68 @@ def create_table(cursor, tb_name):
             print("already exists.")
         else:
             print(err.msg)
-    
 
 
 def table_description(tb_name):
-
     return f"""
             CREATE TABLE IF NOT EXISTS {tb_name} 
             (
-                `id` int(11)
-            )ENGINE=InnoDB
+                `SEASON` CHAR(4),
+                `LEAGUE` CHAR(5),
+                `Date` CHAR(20),
+                `Time` CHAR(10),
+                `HomeTeam` CHAR(50),
+                `AwayTeam` CHAR(50),
+                `FTHG` CHAR(5),
+                `FTAG` CHAR(5),
+                `FTR` CHAR(2),
+                `HTHG` CHAR(5),
+                `HTAG` CHAR(5),
+                `HTR` CHAR(2),
+                `HS` CHAR(5),
+                `AS` CHAR(5),
+                `HST` CHAR(5),
+                `AST` CHAR(5),
+                `HF` CHAR(5),
+                `AF` CHAR(5),
+                `HC` CHAR(5),
+                `AC` CHAR(5),
+                `HY` CHAR(5),
+                `AY` CHAR(5),
+                `HR` CHAR(5),
+                `AR` INT(5),
+                PRIMARY KEY (`SEASON`, `LEAGUE`, `HomeTeam`, `AwayTeam`)
+            ) ENGINE=InnoDB
         """
+
+def insert_data(cursor, tb_name, val):
+    req = f"""
+            INSERT INTO {tb_name} 
+                (`SEASON`, `LEAGUE`, `Date`, `Time`, `HomeTeam`, `AwayTeam`, `FTHG`, `FTAG`, `FTR`, `HTHG`,
+                  `HTAG`, `HTR`, `HS`, `AS`, `HST`, `AST`, `HF`, `AF`, `HC`, `AC`, `HY`, `AY`, `HR`, `AR` )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+    cursor.executemany(req, val)
+    
+
 
 if __name__ == '__main__':
     cnx = engine_connection(params.MYSQL_USER, params.MYSQL_PASSWORD, params.MYSQL_HOST)
     DB_NAME = params.MYSQL_DB_NAME
+    TB_NAME = 'Matchs'
     cursor = cnx.cursor()
     cnx.database = create_database(cursor)
-    create_table(cursor,'test')
+    create_table(cursor,TB_NAME)
 
+
+    for dirs,_, files in os.walk(dataset_path):
+        if files:
+
+            season = os.path.split(dirs)[-1]
+            for f in files:
+                file = os.path.join(dirs, f)
+                dataset = extract_fields(file, season)
+                insert_data(cursor, TB_NAME, dataset)
+            cnx.commit()
     cnx.close()
-
-    extract_fields(os.path.join(dataset_path, '2324', '2324_I1.csv'))
+        
