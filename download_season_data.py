@@ -14,10 +14,10 @@ leagues = {
     'I1': 'Italy',
     'D1': 'Germany',
     'SP1': 'Spain',
-    'F1': 'France',
-    'P1': 'Portugal',
-    'N1': 'Netherlands',
-    'B1': 'Belgium'
+    'F1': 'France'
+    #'P1': 'Portugal',
+    #'N1': 'Netherlands',
+    #'B1': 'Belgium'
 }
 
 
@@ -31,9 +31,9 @@ def season_list(number_season=1):
     >>> 
     """
     seasons = []
-    LIMIT_SEASON = 2006
+    LIMIT_SEASON = 2007
     year = date.today().year
-    # limit the max old season to 2005-2006
+    # limit the max old season to 2007-2008
     if (year - number_season) < LIMIT_SEASON:
         number_season = year - LIMIT_SEASON
         print(f'Warning: Limit season league = {LIMIT_SEASON}')
